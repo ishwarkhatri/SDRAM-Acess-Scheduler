@@ -12,7 +12,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +30,7 @@ public class SDRAMScheduler {
 			System.exit(1);
 		}
 
+		echo("\n**** SDRAM Memory Access Scheduler ****\n");
 		init();
 
 		String inputFileName = args[0];
@@ -40,15 +40,17 @@ public class SDRAMScheduler {
 		File outputFile = new File(outputFileName);
 
 		int activateIndex = 0;
-		int readWriteIndex = 0;
-		int prechargeIndex = 0;
 
+		echo("Loading input file: " + inputFileName);
 		readFile(inputFile);
+		echo("File loading completed...");
+
 		String currentOperation = null;
 		String prevOperation = null;
 		int idleCycleCount;
 		String idleCmd;
 
+		echo("\nStarting memory access scheduling");
 		for(int i = 0; i < DATA_LIST.size();) {
 			String input = DATA_LIST.get(i);
 
@@ -120,7 +122,6 @@ public class SDRAMScheduler {
 			currentOperation = PRECHARGE;
 
 			idleCycleCount = getIdleCycleCount(prevOperation, currentOperation);
-			//activateIndex += idleCycleCount;
 
 			int prechargeAndActivateDelay = getIdleCycleCount(ACTIVATE, PRECHARGE);
 
@@ -145,9 +146,13 @@ public class SDRAMScheduler {
 			registerOutput(PRECHARGE);
 			prevOperation = currentOperation;
 		}
+		echo("Scheduling completed...");
 
+		echo("\nWriting data to output file: " + outputFileName);
 		generateOutputFile(outputFile);
-		
+		echo("Data writing completed...");
+
+		echo("\n**** End Of Program ****");
 	}
 
 
